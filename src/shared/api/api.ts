@@ -1,0 +1,85 @@
+import axios from 'axios'
+import { refresh } from '../../features/auth/auth.api';
+import { authStorage } from '../../features/auth/auth.storage';
+
+const ACCESS_TOKEN_KEY = 'access_key';
+
+let isRefreshing = false
+let failedQueue: any[] = []
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error)
+    } else {
+      prom.resolve(token)
+    }
+  })
+
+  failedQueue = []
+}
+
+export const api = axios.create({
+  baseURL: 'http://localhost:5081/api',
+  withCredentials: true,
+})
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem(ACCESS_TOKEN_KEY)
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+
+  return config
+})
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+
+    if (error.response?.status !== 401) {
+      return Promise.reject(error)
+    }
+
+    if (originalRequest._retry) {
+      return Promise.reject(error)
+    }
+
+    originalRequest._retry = true
+
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        failedQueue.push({
+          resolve: (token: string) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`
+            resolve(api(originalRequest))
+          },
+          reject,
+        })
+      })
+    }
+
+    isRefreshing = true
+
+    try {
+      const accessToken = await refresh()
+
+      authStorage.set(accessToken)
+
+      processQueue(null, accessToken)
+
+      originalRequest.headers.Authorization = `Bearer ${accessToken}`
+      return api(originalRequest)
+    } catch (err) {
+      processQueue(err, null)
+
+      authStorage.clear()
+
+      return Promise.reject(err)
+    } finally {
+      isRefreshing = false
+    }
+  }
+)
