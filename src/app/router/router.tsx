@@ -4,6 +4,7 @@ import BoardPage from '../../pages/board/BoardPage'
 import { AppLayout } from '../layout/AppLayout'
 import { LoginPage } from '../../pages/login/LoginPage'
 import { ProtectedRoute } from './ProtectedRoute'
+import { WorkspacesPage } from '../../pages/login/WorkspacesPage'
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +21,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ProjectsPage />,
+        element: <WorkspacesPage />,
       },
       {
         path: 'projects/:projectId',

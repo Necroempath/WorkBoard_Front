@@ -1,34 +1,34 @@
-import { useState } from 'react'
-import { login, register } from './auth.api'
-import type { LoginParams, RegisterParams } from './auth.api'
-import { authStorage } from './auth.storage'
+import { useState } from "react";
+import { login, register } from "./auth.api";
+import type { LoginParams, RegisterParams } from "./auth.api";
+import { authStorage } from "./auth.storage";
 
 export const useAuth = () => {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const signIn = async (params: LoginParams) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const { accessToken } = await login(params)
-      authStorage.set(accessToken)
+      const { accessToken } = await login(params);
+      authStorage.setToken(accessToken);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const signUp = async (params: RegisterParams) => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const { accessToken } = await register(params)
-      authStorage.set(accessToken)
+      const { accessToken } = await register(params);
+      authStorage.setToken(accessToken);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const logout = () => {
-    authStorage.clear()
-  }
+    authStorage.clearToken();
+  };
 
-  return { signIn, signUp, logout, loading }
-}
+  return { signIn, signUp, logout, loading };
+};

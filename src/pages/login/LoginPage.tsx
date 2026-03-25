@@ -3,9 +3,9 @@ import { useAuth } from '../../features/auth/auth.hooks'
 import type { LoginParams, RegisterParams } from '../../features/auth/auth.api'
 import { useNavigate } from 'react-router-dom'
 
-const navigate = useNavigate()
-
 export function LoginPage() {
+  const navigate = useNavigate()
+  
   const { signIn, signUp, loading } = useAuth()
   const [isLogin, setIsLogin] = useState(true)
 
