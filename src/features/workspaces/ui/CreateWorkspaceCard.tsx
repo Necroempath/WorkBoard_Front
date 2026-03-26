@@ -1,7 +1,31 @@
-export function CreateWorkspaceCard() {
+import { useState } from 'react'
+import { CreateWorkspaceModal } from './CreateWorkspaceModal'
+
+type Props = {
+  onCreated?: (workspaceName: string) => void
+}
+
+export const CreateWorkspaceCard = ({ onCreated }: Props) => {
+  const [open, setOpen] = useState(false)
+
   return (
-    <div className="border-2 border-dashed rounded-xl p-4 flex items-center justify-center cursor-pointer hover:bg-gray-100">
-      <span className="text-gray-500">+ Create Workspace</span>
-    </div>
+    <>
+      <div
+        className="border border-dashed rounded-xl p-6 text-center cursor-pointer hover:bg-gray-100"
+        onClick={() => setOpen(true)}
+      >
+        + Create Workspace
+      </div>
+
+      {open && (
+        <CreateWorkspaceModal
+          onClose={() => setOpen(false)}
+          onCreated={(name) => {
+            onCreated?.(name)
+            setOpen(false)
+          }}
+        />
+      )}
+    </>
   )
 }

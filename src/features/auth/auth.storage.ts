@@ -1,18 +1,26 @@
-const ACCESS_TOKEN_KEY = "access_token";
-const USER = "user";
+import type { User } from "../../entities/user";
+import { STORAGE_KEYS } from "../../shared/config/storageKeys";
+
 
 export const authStorage = {
   setToken(token: string) {
-    localStorage.setItem(ACCESS_TOKEN_KEY, token);
+    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
   },
   getToken() {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+    return localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+  },
+  setUser(user: User) {
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
   },
   getUser() {
-    const user = localStorage.getItem(USER);
+    const user = localStorage.getItem(STORAGE_KEYS.USER);
     return user ? JSON.parse(user) : { name: 'User', email: '', role: ['User'] }
   },
   clearToken() {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
   },
+  clearUser() {
+    
+    localStorage.removeItem(STORAGE_KEYS.USER);
+  }
 };

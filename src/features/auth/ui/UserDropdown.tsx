@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { authStorage } from "../../auth/auth.storage";
+import { useAuth } from "../auth.hooks";
 
 type Props = {
   onClose: () => void;
@@ -7,9 +7,10 @@ type Props = {
 
 export function UserDropdown({ onClose }: Props) {
   const navigate = useNavigate();
+  const { logout } = useAuth()
 
   const handleLogout = () => {
-    authStorage.clearToken();
+    logout();
     onClose();
     navigate("/login");
   };
