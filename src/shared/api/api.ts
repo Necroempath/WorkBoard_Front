@@ -76,6 +76,8 @@ api.interceptors.response.use(
 
       authStorage.clearToken();
 
+      window.location.href = '/login'
+      
       return Promise.reject(err);
     } finally {
       isRefreshing = false;

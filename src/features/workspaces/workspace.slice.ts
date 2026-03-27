@@ -1,10 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { createWorkspace, getWorkspaces } from './workspace.api'
+import { createWorkspace, getWorkspace, getWorkspaces } from './workspace.api'
 import type { Workspace } from '../../entities/workspace'
 
 export const fetchWorkspaces = createAsyncThunk('workspaces/fetch', async () => {
   return await getWorkspaces()
+})
+
+export const fetchWorkspaceDetails = createAsyncThunk('workspace/fetch', async (workspaceId: string) => {
+  return await getWorkspace(workspaceId)
 })
 
 export const addWorkspace = createAsyncThunk('workspaces/add', async (name: string) => {

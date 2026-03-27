@@ -1,10 +1,10 @@
 import { createBrowserRouter } from 'react-router-dom'
-import ProjectsPage from '../../pages/projects/ProjectsPage'
-import BoardPage from '../../pages/board/BoardPage'
 import { AppLayout } from '../layout/AppLayout'
 import { LoginPage } from '../../pages/login/LoginPage'
 import { ProtectedRoute } from './ProtectedRoute'
-import { WorkspacesPage } from '../../pages/login/WorkspacesPage'
+import { WorkspacesPage } from '../../pages/workspaces/WorkspacesPage'
+import { ProjectsPage } from '../../pages/projects/ProjectsPage'
+import { BoardPage } from '../../pages/board/BoardPage'
 
 export const router = createBrowserRouter([
   {
@@ -24,7 +24,11 @@ export const router = createBrowserRouter([
         element: <WorkspacesPage />,
       },
       {
-        path: 'projects/:projectId',
+        path: 'projects/:workspaceId',
+        element: <ProjectsPage />,
+      },
+      {
+        path: 'board/:projectId',
         element: <BoardPage />,
       },
     ],
