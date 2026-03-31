@@ -19,7 +19,7 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 export const api = axios.create({
-  baseURL: "http://localhost:5081/api",
+  baseURL: "http://localhost:5081/",
   withCredentials: true,
 });
 
