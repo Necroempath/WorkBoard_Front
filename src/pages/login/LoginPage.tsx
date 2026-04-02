@@ -27,6 +27,7 @@ export function LoginPage() {
       const params: RegisterParams = { name, email, password, confirmPassword }
 
       await signUp(params)
+      navigate('/')
     }
   }
 

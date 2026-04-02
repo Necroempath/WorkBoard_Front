@@ -29,7 +29,7 @@ export const CreateColumnModal = ({ onClose }: { onClose: () => void }) => {
         className="bg-white p-6 rounded shadow w-96"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-4 font-semibold">Create Issue</h2>
+        <h2 className="mb-4 font-semibold">Add Column</h2>
 
         <input
           className="border p-2 w-full mb-3"

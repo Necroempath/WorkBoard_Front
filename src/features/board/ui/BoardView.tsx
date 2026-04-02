@@ -2,33 +2,77 @@ import { useAppDispatch } from '../../../app/hooks'
 import type { Column as ColumnType } from '../../../entities/project'
 import { Column } from './Column'
 import { moveIssueAsync } from '../board.slice'
-import { DndContext, type DragEndEvent } from '@dnd-kit/core'
+import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core'
+import { useState } from 'react'
+import { IssueOverlay } from './IssueOverlay'
 
 export const BoardView = ({ columns }: { columns: ColumnType[] }) => {
   const dispatch = useAppDispatch()
+  let overId : string | undefined = undefined;
+  const [activeId, setActiveId] = useState<string | null>(null)
+const sensors = useSensors(
+  useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 8,
+    },
+  })
+)
+const handleDragStart = (event: DragStartEvent) => {
+  setActiveId(event.active.id as string)
+}
 
 const handleDragEnd = (event: DragEndEvent) => {
+  setActiveId(null)
+
   const { active, over } = event
   if (!over) return
 
   const issueId = active.id as string
-  const toColumnId = over.id as string
 
-  const fromColumnId = findColumnId(issueId, columns)
+  const overData = over.data.current
 
-  if (!fromColumnId || fromColumnId === toColumnId) return
+  const toColumnId =
+    overData?.columnId ||
+    findColumnId(over.id as string, columns)
 
-  console.log('dispatching in view board')
-  dispatch(moveIssueAsync({ issueId, fromColumnId, toColumnId }))
+  if (!toColumnId) return
+
+  const targetColumn = columns.find(c => c.id === toColumnId)
+  if (!targetColumn) return
+
+  overId = over.id as string
+
+  const overIndex = targetColumn.issues.findIndex(i => i.id === overId)
+
+  const targetIndex =
+    overIndex === -1
+      ? targetColumn.issues.length
+      : overIndex
+
+  dispatch(moveIssueAsync({
+    issueId,
+    targetColumnId: toColumnId,
+    targetIndex
+  }))
 }
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext  
+      sensors={sensors} 
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}>
       <div className="flex gap-6 overflow-x-auto pb-4">
         {columns.map((col) => (
-          <Column key={col.id} column={col} />
+          <Column
+            key={col.id}
+            column={col}
+            activeId={activeId}
+            overId={overId}/>
         ))}
       </div>
+        <DragOverlay>
+          {activeId ? <IssueOverlay issueId={activeId} columns={columns} /> : null}
+        </DragOverlay>
     </DndContext>
   )
 }

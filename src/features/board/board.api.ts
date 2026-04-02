@@ -6,7 +6,7 @@ export type CreateColumnParams = { projectId: string; name: string }
 export const moveIssueApi = async (params: {
   issueId: string
   targetColumnId: string
-  newOrder: number
+  targetIndex: number
 }) => {
   await api.patch('/issues', params)
 }

@@ -1,10 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { createColumn, createIssue, getProject, type CreateColumnParams } from './board.api'
+import { createColumn, createIssue, getProject, moveIssueApi, type CreateColumnParams } from './board.api'
 import type { Project } from '../../entities/project'
+import { api } from '../../shared/api/api'
+import type { Issue } from '../../entities/issue'
 
-
-import { moveIssueApi } from './board.api'
-import type { RootState } from '../../app/store'
 
 export const createColumnAsync = createAsyncThunk(
   'board/createColumn',
@@ -22,32 +21,25 @@ export const createIssueAsync = createAsyncThunk(
 
 export const moveIssueAsync = createAsyncThunk(
   'board/moveIssue',
-  async (
-    { issueId, fromColumnId, toColumnId }: any,
-    { dispatch, getState }
-  ) => {
-    const state = getState() as RootState
-
-    const prevProject = state.board.project
-
-    dispatch(moveIssue({ issueId, fromColumnId, toColumnId }))
-
-    try {
-      await moveIssueApi({
-        issueId,
-        targetColumnId: toColumnId,
-        newOrder: 0,
-      })
-    } catch (err) {
-      dispatch(setProject(prevProject))
-    }
+  async (params: {
+    issueId: string
+    targetColumnId: string
+    targetIndex: number
+  }) => {
+    return await moveIssueApi(params)
   }
 )
 
 export const fetchBoard = createAsyncThunk(
   'board/fetch',
   async (projectId: string) => {
-    return await getProject(projectId)
+    const data = await getProject(projectId)
+
+    data.columns.forEach(col => {
+      col.issues.sort((a, b) => a.order - b.order)
+    })
+
+    return data
   }
 )
 
@@ -106,6 +98,27 @@ const boardSlice = createSlice({
 
       const column = state.project?.columns.find(c => c.id === issue.columnId)
       column?.issues.push(issue)
+    })
+    .addCase(moveIssueAsync.pending, (state, action) => {
+      const { issueId, targetColumnId, targetIndex } = action.meta.arg
+
+      let issue: Issue | undefined
+      if (!state.project) return
+
+      for (const col of state.project.columns) {
+        const idx = col.issues.findIndex(i => i.id === issueId)
+        if (idx !== -1) {
+          issue = col.issues.splice(idx, 1)[0]
+          break
+        }
+      }
+
+      if (!issue) return
+
+      const targetCol = state.project.columns.find(c => c.id === targetColumnId)
+      if (!targetCol) return
+
+      targetCol.issues.splice(targetIndex, 0, issue)
     })
   },
 })
