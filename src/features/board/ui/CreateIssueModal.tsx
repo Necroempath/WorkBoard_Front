@@ -39,7 +39,7 @@ export const CreateIssueModal = ({
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-9999" onClick={onClose}>
       <div
         className="bg-white p-6 rounded shadow w-96"
         onClick={(e) => e.stopPropagation()}
@@ -76,7 +76,7 @@ export const CreateIssueModal = ({
 
           <button
             disabled={!isValid}
-            className="bg-blue-600 text-white px-4 py-2 disabled:opacity-50"
+            className="bg-blue-600 rounded text-white px-4 py-2 disabled:opacity-50"
             onClick={handleCreate}
           >
             Create

@@ -11,4 +11,5 @@ export type Project = {
   id: string;
   name: string;
   columns: Column[];
+  workspaceId: string
 };

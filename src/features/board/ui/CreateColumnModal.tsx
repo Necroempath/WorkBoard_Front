@@ -24,7 +24,7 @@ export const CreateColumnModal = ({ onClose }: { onClose: () => void }) => {
   }
 
   return (
-<div className="fixed inset-0 flex items-center justify-center" onClick={onClose}>
+<div className="fixed inset-0 bg-black/40 flex items-center justify-center" onClick={onClose}>
       <div
         className="bg-white p-6 rounded shadow w-96"
         onClick={(e) => e.stopPropagation()}

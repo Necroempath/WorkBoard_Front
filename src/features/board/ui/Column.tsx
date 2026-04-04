@@ -3,7 +3,13 @@ import type { Column as ColumnType } from '../../../entities/project'
 import { IssueCard } from './IssueCard'
 import { useDroppable } from '@dnd-kit/core'
 import { CreateIssueModal } from './CreateIssueModal'
-import { IconButton } from '../../../shared/ui/IconButton'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPenToSquare, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { useAppDispatch } from '../../../app/hooks'
+import { DeleteColumnModal } from './DeleteColumnModal'
+import { deleteColumnAsync, updateColumnAsync } from '../board.slice'
+import { ShowNotification } from '../../../shared/ui/ShowNotification'
+import { EditNameModal } from '../../../shared/ui/EditNameModal'
 
 export const Column = ({
   column,
@@ -18,22 +24,76 @@ export const Column = ({
   id: column.id,
   data: { columnId: column.id }
 })
-
+const iconClass =
+  'text-gray-400 hover:text-gray-600 cursor-pointer transition-colors'
   const [openIssueModal, setOpenIssueModal] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  
+  const [hovered, setHovered] = useState(false)
+
+  const dispatch = useAppDispatch()
+
+const handleEdit = (name: string) => {
+  dispatch(updateColumnAsync({
+    id: column.id,
+    name
+  }))
+  setEditOpen(false)
+}
+
+const handleDelete = () => {
+   if (column.issues.length > 0) {
+    ShowNotification(
+      'Cannot delete column with existing issues',
+      'error'
+    )
+  }
+  else dispatch(deleteColumnAsync(column.id))
+
+  setConfirmOpen(false)
+}
 
   return (
     <div
       ref={setNodeRef}
-      className="bg-gray-100 rounded-xl p-4 w-72 hrink-0 shadow-sm"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      className="bg-gray-100 rounded-xl p-4 w-72 shrink-0 shadow-sm"
     >
       <div className="flex justify-between items-center mb-3">
-        <h2>{column.name}</h2>
+  <h2>{column.name}</h2>
 
-          <IconButton
-            variant="gray"
-            onClick={() => setOpenIssueModal(true)}
-          />
-      </div>
+  <div className="flex items-center gap-2">
+
+    <FontAwesomeIcon
+      icon={faPlus}
+      className={`${iconClass} transition-opacity duration-200 ${
+      hovered ? 'opacity-100' : 'opacity-0'
+    }`}
+      onClick={() => setOpenIssueModal(true)}
+    />
+
+    <FontAwesomeIcon
+      icon={faPenToSquare}
+      className={`${iconClass} transition-opacity duration-200 ${
+      hovered ? 'opacity-100' : 'opacity-0'
+    }`}
+      onClick={(e) => { 
+        e.stopPropagation()
+        setEditOpen(true)
+      }}
+    />
+
+    <FontAwesomeIcon
+      icon={faXmark}
+      className={`${iconClass} transition-opacity duration-200 ${
+      hovered ? 'opacity-100' : 'opacity-0'
+    }`}
+      onClick={() => setConfirmOpen(true)}
+    />
+  </div>
+</div>
 
       <div className="space-y-2 min-h-12.5">
         {column.issues.map((issue, index) => {
@@ -60,6 +120,22 @@ export const Column = ({
           onClose={() => setOpenIssueModal(false)}
         />
       )}
+      {editOpen && (
+        
+      <EditNameModal
+        title='Edit Column'
+        initialValue={column.name}
+        onClose={() => setEditOpen(false)}
+        onSubmit={handleEdit}
+      />
+    )}
+
+    {confirmOpen && (
+      <DeleteColumnModal
+        onConfirm={handleDelete}
+        onClose={() => setConfirmOpen(false)}
+      />
+    )}
     </div>
   )
 }

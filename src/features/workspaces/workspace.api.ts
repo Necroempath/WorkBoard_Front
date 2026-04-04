@@ -8,6 +8,14 @@ export const createWorkspace = async (params: CreateWorkspaceParams): Promise<Wo
   return res.data
 }
 
+export const addMember = async (workspaceId: string, data: {
+  email: string
+  role: 1 | 2 | 3
+}) => {
+  const res = await api.post(`/memberships/${workspaceId}`, data)
+  return res.data
+}
+
 export const getWorkspace = async(workspaceId: string): Promise<WorkspaceDetails> => {
     const res = await api.get<WorkspaceDetails>(`/workspaces/${workspaceId}`)
     return res.data

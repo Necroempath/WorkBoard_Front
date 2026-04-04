@@ -55,14 +55,14 @@ const handleDragEnd = (event: DragEndEvent) => {
     targetIndex
   }))
 }
-
+    const sortedColumns = [...columns].sort((a, b) => a.order - b.order)
   return (
     <DndContext  
       sensors={sensors} 
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}>
       <div className="flex gap-6 overflow-x-auto pb-4">
-        {columns.map((col) => (
+        {sortedColumns.map((col) => (
           <Column
             key={col.id}
             column={col}

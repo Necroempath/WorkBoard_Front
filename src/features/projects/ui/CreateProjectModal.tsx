@@ -41,7 +41,7 @@ export const CreateProjectModal = ({ onClose }: Props) => {
 
   return (
     <div
-      className="fixed inset-0 rounded-xl flex justify-center items-center"
+      className="fixed inset-0 bg-black/40 flex items-center justify-center"
       onClick={onClose}
     >
       <div

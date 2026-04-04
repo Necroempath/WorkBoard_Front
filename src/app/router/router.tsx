@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { AppLayout } from '../layout/AppLayout'
 import { LoginPage } from '../../pages/login/LoginPage'
 import { ProtectedRoute } from './ProtectedRoute'
@@ -20,15 +20,19 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
-        index: true,
+        path: 'workspaces',
         element: <WorkspacesPage />,
       },
       {
-        path: 'projects/:workspaceId',
+        index: true,
+        element: <Navigate to="/workspaces" replace />,
+      },
+      {
+        path: 'workspaces/:workspaceId/projects',
         element: <ProjectsPage />,
       },
       {
-        path: 'board/:projectId',
+        path: 'workspaces/:workspaceId/projects/:projectId/board',
         element: <BoardPage />,
       },
     ],

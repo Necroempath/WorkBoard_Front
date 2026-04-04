@@ -4,9 +4,9 @@ import { fetchWorkspaces } from '../workspace.slice'
 import { WorkspaceCard } from './WorkspaceCard'
 import { CreateWorkspaceCard } from './CreateWorkspaceCard'
 
-
 export const WorkspaceGrid = () => {
   const dispatch = useAppDispatch()
+
   const workspaces = useAppSelector((state) => state.workspaces.items)
 
   useEffect(() => {

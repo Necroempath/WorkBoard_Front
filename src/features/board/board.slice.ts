@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { createColumn, createIssue, getProject, moveIssueApi, type CreateColumnParams } from './board.api'
+import { createColumn, createIssue, deleteColumn, deleteIssue, getProject, moveIssueApi, updateColumn, updateIssue, updateProject, type CreateColumnParams } from './board.api'
 import type { Project } from '../../entities/project'
 import { api } from '../../shared/api/api'
 import type { Issue } from '../../entities/issue'
@@ -19,6 +19,21 @@ export const createIssueAsync = createAsyncThunk(
   }
 )
 
+export const updateColumnAsync = createAsyncThunk(
+  'board/updateColumn',
+  async (data: { id: string; name: string }) => {
+    return await updateColumn(data)
+  }
+)
+
+export const deleteColumnAsync = createAsyncThunk(
+  'board/deleteColumn',
+  async (columnId: string) => {
+    await deleteColumn(columnId)
+    return columnId
+  }
+)
+
 export const moveIssueAsync = createAsyncThunk(
   'board/moveIssue',
   async (params: {
@@ -27,6 +42,32 @@ export const moveIssueAsync = createAsyncThunk(
     targetIndex: number
   }) => {
     return await moveIssueApi(params)
+  }
+)
+export const updateProjectAsync = createAsyncThunk(
+  'board/updateProject',
+    async (data: { id: string; name: string }) => {
+    return await updateProject(data)
+  }
+)
+
+export const updateIssueAsync = createAsyncThunk(
+  'board/updateIssue',
+  async (issue: {
+    id: string
+    title: string
+    description?: string
+    priority: number
+  }) => {
+    return await updateIssue(issue)
+  }
+)
+
+export const deleteIssueAsync = createAsyncThunk(
+  'board/deleteIssue',
+  async (issueId: string) => {
+    await deleteIssue(issueId)
+    return issueId
   }
 )
 
@@ -99,6 +140,34 @@ const boardSlice = createSlice({
       const column = state.project?.columns.find(c => c.id === issue.columnId)
       column?.issues.push(issue)
     })
+    .addCase(updateIssueAsync.fulfilled, (state, action) => {
+      if (!state.project) return
+
+      const updated = action.payload
+
+      for (const col of state.project.columns) {
+        const issue = col.issues.find(i => i.id === updated.id)
+        if (issue) {
+          issue.title = updated.title
+          issue.description = updated.description
+          issue.priority = updated.priority
+          break
+        }
+      }
+    })
+    .addCase(deleteIssueAsync.fulfilled, (state, action) => {
+      if (!state.project) return
+
+      const issueId = action.payload
+
+      for (const col of state.project.columns) {
+        const idx = col.issues.findIndex(i => i.id === issueId)
+        if (idx !== -1) {
+          col.issues.splice(idx, 1)
+          break
+        }
+      }
+    })
     .addCase(moveIssueAsync.pending, (state, action) => {
       const { issueId, targetColumnId, targetIndex } = action.meta.arg
 
@@ -120,6 +189,32 @@ const boardSlice = createSlice({
 
       targetCol.issues.splice(targetIndex, 0, issue)
     })
+    .addCase(updateColumnAsync.fulfilled, (state, action) => {
+      if (!state.project) return
+
+      const updated = action.payload
+
+      const column = state.project.columns.find(c => c.id === updated.id)
+      if (column) {
+        column.name = updated.name
+      }
+    })
+    .addCase(updateProjectAsync.fulfilled, (state, action) => {
+      if (!state.project) return
+
+      const updated = action.payload
+
+      state.project.name = updated.name
+    })
+    .addCase(deleteColumnAsync.fulfilled, (state, action) => {
+  if (!state.project) return
+
+  const columnId = action.payload
+
+  state.project.columns = state.project.columns.filter(
+    c => c.id !== columnId
+  )
+})
   },
 })
 

@@ -37,7 +37,7 @@ export const CreateWorkspaceModal = ({ onClose, onCreated }: Props) => {
 
   return (
     <div
-      className="fixed inset-0 flex justify-center items-center"
+      className="fixed inset-0 bg-black/40 flex items-center justify-center"
       onClick={onClose}
     >
       <div
