@@ -4,7 +4,7 @@ import { useAppDispatch } from '../../../app/hooks'
 import { addMemberAsync } from '../../workspaces/workspace.slice'
 import { ShowNotification } from '../../../shared/ui/ShowNotification'
 
-const RoleEnum = {
+const InviteRolesEnum = {
   Admin: 1,
   Member: 2,
   Viewer: 3,
@@ -15,7 +15,7 @@ export const AddMemberModal = ({ onClose }: { onClose: () => void }) => {
   const dispatch = useAppDispatch()
 
   const [email, setEmail] = useState('')
-  const [role, setRole] = useState<number>(RoleEnum.Member)
+  const [role, setRole] = useState<number>(InviteRolesEnum.Member)
   const [loading, setLoading] = useState(false)
 
   const isValid = email.length >= 5 && email.includes('@')
@@ -67,9 +67,9 @@ if (addMemberAsync.fulfilled.match(result)) {
           onChange={(e) => setRole(Number(e.target.value))}
           className="w-full border p-2 rounded"
         >
-          <option value={RoleEnum.Admin}>Admin</option>
-          <option value={RoleEnum.Member}>Member</option>
-          <option value={RoleEnum.Viewer}>Viewer</option>
+          <option value={InviteRolesEnum.Admin}>Admin</option>
+          <option value={InviteRolesEnum.Member}>Member</option>
+          <option value={InviteRolesEnum.Viewer}>Viewer</option>
         </select>
 
         <div className="flex justify-end gap-2">

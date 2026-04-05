@@ -5,6 +5,7 @@ import { fetchProjects } from '../../features/projects/projects.slice'
 import { ProjectCard } from '../../features/projects/ui/ProjectCard'
 import { CreateProjectCard } from '../../features/projects/ui/CreateProjectCard'
 import { AddMemberModal } from '../../features/projects/ui/AddMemberModal'
+import { ManageMembersModal } from '../../features/projects/ui/ManageMembersModal'
 
 
 export const ProjectsPage = () => {
@@ -12,6 +13,7 @@ export const ProjectsPage = () => {
   const dispatch = useAppDispatch()
 
   const [openAddMember, setOpenAddMember] = useState(false)
+  const [openManageMember, setOpenManageMember] = useState(false)
 
   const workspaceName = useAppSelector((s) => s.workspaces.items.find(w => w.id == workspaceId)?.name)
   const projects = useAppSelector((s) => s.projects.items)
@@ -35,13 +37,15 @@ export const ProjectsPage = () => {
   <div className="flex items-center gap-3">
     
     <button 
-    onClick={() => setOpenAddMember(true)}
-    className="text-gray-500 hover:text-gray-700 hover:cursor-pointer">
+      onClick={() => setOpenAddMember(true)}
+      className="text-gray-500 hover:text-gray-700 hover:cursor-pointer">
       + Member
     </button>
 
     
-    <button className="text-gray-500 hover:text-gray-700 hover:cursor-pointer">
+    <button 
+      onClick={() => setOpenManageMember(true)}
+      className="text-gray-500 hover:text-gray-700 hover:cursor-pointer">
       Manage
     </button>
   </div>
@@ -60,8 +64,11 @@ export const ProjectsPage = () => {
       )}
 
       {openAddMember && (
-  <AddMemberModal onClose={() => setOpenAddMember(false)} />
-)}
+        <AddMemberModal onClose={() => setOpenAddMember(false)} />
+        )}
+        {openManageMember && (
+          <ManageMembersModal onClose={() => setOpenManageMember(false)}/>
+        )}
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { addMember, createWorkspace, getWorkspace, getWorkspaces } from './workspace.api'
-import type { Workspace } from '../../entities/workspace'
+import { addMember, createWorkspace, getWorkspace, getWorkspaceMembers, getWorkspaces, removeMember, updateMemberRole } from './workspace.api'
+import type { Workspace, WorkspaceMember } from '../../entities/workspace'
 
 export const fetchWorkspaces = createAsyncThunk('workspaces/fetch', async () => {
   return await getWorkspaces()
@@ -36,16 +36,42 @@ export const addMemberAsync = createAsyncThunk(
   }
 )
 
-type WorkspacesState = {
+export const fetchMembersAsync = createAsyncThunk(
+  'workspaces/fetchMembers',
+  async (workspaceId: string) => {
+    return await getWorkspaceMembers(workspaceId)
+  }
+)
+
+export const updateMemberRoleAsync = createAsyncThunk(
+  'workspaces/updateRole',
+  async (params: { workspaceId: string; userId: string; role: number }) => {
+    return await updateMemberRole(params)
+  }
+)
+
+export const removeMemberAsync = createAsyncThunk(
+  'workspaces/removeMember',
+  async (params: { workspaceId: string; userId: string }) => {
+    await removeMember(params)
+    return params.userId 
+  }
+)
+
+type WorkspaceState = {
   items: Workspace[]
+  members: WorkspaceMember[]
+  currentUserRole: number
   loading: boolean
   error: string | null
 }
 
-const initialState: WorkspacesState = {
+const initialState: WorkspaceState = {
   items: [],
+  members: [],
+  currentUserRole: 2,
   loading: false,
-  error: null,
+  error: null
 }
 
 export const workspacesSlice = createSlice({
@@ -72,7 +98,23 @@ export const workspacesSlice = createSlice({
       .addCase(addWorkspace.rejected, (state, action) => {
         state.loading = false
         state.error = action.error.message || 'Failed to add workspace'
-      })
+      }).addCase(fetchMembersAsync.fulfilled, (state, action) => {
+      state.members = action.payload.members
+      state.currentUserRole = action.payload.currentUserRole
+    })
+    .addCase(updateMemberRoleAsync.fulfilled, (state, action) => {
+      const { userId, role } = action.meta.arg
+
+      const member = state.members.find(m => m.userId === userId)
+      if (member) {
+        member.role = role
+      }
+    })
+    .addCase(removeMemberAsync.fulfilled, (state, action) => {
+      state.members = state.members.filter(
+        m => m.userId !== action.payload
+      )
+    })
   },
 })
 
