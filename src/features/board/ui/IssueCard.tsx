@@ -4,10 +4,10 @@ import { CSS } from '@dnd-kit/utilities'
 import { useState } from 'react';
 import { useAppDispatch } from '../../../app/hooks';
 import { deleteIssueAsync, updateIssueAsync } from '../board.slice';
-import { DeleteIssueModal } from './DeleteIssueModal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { EditIssueModal } from './EditIssueModal';
+import { DeleteConfirmationModal } from '../../../shared/ui/DeleteConfirmationModal';
 
 export const IssueCard = ({ issue }: { issue: Issue }) => {
   const { setNodeRef: setDragRef, listeners, attributes, transform } = useDraggable({
@@ -106,7 +106,8 @@ export const IssueCard = ({ issue }: { issue: Issue }) => {
           />
         )}
       {confirmOpen && (
-        <DeleteIssueModal
+        <DeleteConfirmationModal
+          message={`Are you sure you want to delete the issue [${issue.title}]?`}
           onConfirm={handleDelete}
           onClose={() => setConfirmOpen(false)}
         />

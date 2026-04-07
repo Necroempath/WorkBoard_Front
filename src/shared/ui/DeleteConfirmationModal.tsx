@@ -1,15 +1,17 @@
 import { createPortal } from "react-dom"
 
-export const DeleteIssueModal = ({
+export const DeleteConfirmationModal = ({
+  message,
   onConfirm,
   onClose
 }: {
+  message: string,  
   onConfirm: () => void
   onClose: () => void
 }) => {
     return createPortal(
     <div
-      className="fixed inset-0 bg-black/40 flex items-center justify-center"
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div
@@ -17,10 +19,10 @@ export const DeleteIssueModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-semibold mb-4">
-          Are you sure?
+          {message}
         </h2>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 mt-5">
           <button
             className="px-4 py-2 bg-gray-200 hover:bg-gray-300 cursor-pointer rounded"
             onClick={onClose}

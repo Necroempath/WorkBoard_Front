@@ -6,10 +6,10 @@ import { CreateIssueModal } from './CreateIssueModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { useAppDispatch } from '../../../app/hooks'
-import { DeleteColumnModal } from './DeleteColumnModal'
 import { deleteColumnAsync, updateColumnAsync } from '../board.slice'
 import { ShowNotification } from '../../../shared/ui/ShowNotification'
 import { EditNameModal } from '../../../shared/ui/EditNameModal'
+import { DeleteConfirmationModal } from '../../../shared/ui/DeleteConfirmationModal'
 
 export const Column = ({
   column,
@@ -131,7 +131,8 @@ const handleDelete = () => {
     )}
 
     {confirmOpen && (
-      <DeleteColumnModal
+      <DeleteConfirmationModal
+        message={`Are you sure you want to delete the column [${column.name}]?`}
         onConfirm={handleDelete}
         onClose={() => setConfirmOpen(false)}
       />

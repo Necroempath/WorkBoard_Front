@@ -1,25 +1,22 @@
 export type Workspace = {
-  id: string
-  name: string
-  role: string
-}
+  id: string;
+  name: string;
+  role: number;
+};
 
 export type WorkspaceDetails = {
-  id: string
-  name: string
-  members: { id: string; name: string; email: string; role: string; } []
-}
+  id: string;
+  name: string;
+  members: { id: string; name: string; email: string; role: string }[];
+};
 
 export type WorkspaceMember = {
-  userId: string
-  name: string
-  email: string
-  role: number
-}
+  userId: string;
+  name: string;
+  email: string;
+  role: number;
+};
 
-// export const enum RoleEnum {
-//   Owner = 0,
-//   Admin = 1,
-//   Member = 2,
-//   Viewer = 3
-// } 
+export const roleEnum = ["Owner", "Admin", "Member", "Viewer"];
+
+export type roleEnum = (typeof roleEnum)[keyof typeof roleEnum];

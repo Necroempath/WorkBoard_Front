@@ -1,13 +1,9 @@
 import { useNavigate } from "react-router-dom"
-import type { Workspace } from "../../../entities/workspace"
+import { roleEnum, type Workspace } from "../../../entities/workspace"
+import { roleColor } from "../../../shared/ui/styles"
 
 export function WorkspaceCard({ workspace }: { workspace: Workspace }) {
-  const roleColor : any = {
-    Owner: 'text-purple-600',
-    Admin: 'text-blue-600',
-    Member: 'text-green-600',
-    Viewer: 'text-gray-500',
-}
+
   const navigate = useNavigate()
 
   return (
@@ -17,7 +13,7 @@ export function WorkspaceCard({ workspace }: { workspace: Workspace }) {
     >
       <h2 className="font-semibold text-lg">{workspace.name}</h2>
       <div className={`text-sm ${roleColor[workspace.role]}`}>
-  {workspace.role}
+  {roleEnum[workspace.role]}
 </div>
     </div>
   )

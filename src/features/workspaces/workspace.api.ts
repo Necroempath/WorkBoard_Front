@@ -42,9 +42,7 @@ export const removeMember = async (params: {
   workspaceId: string
   userId: string
 }) => {
-  const res = await api.delete(
-    `/memberships/${params.workspaceId}/${params.userId}`
-  )
+  const res = await api.delete(`/memberships/${params.workspaceId}/${params.userId}`)
   return res.data
 }
 
