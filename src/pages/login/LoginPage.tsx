@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import { useAuth } from '../../features/auth/auth.hooks'
-import type { LoginParams, RegisterParams } from '../../features/auth/auth.api'
-import { useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { useAuth } from "../../features/auth/auth.hooks";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../app/hooks";
+import { forgotPasswordAsync } from "../../features/auth/auth.slice";
+import { ShowNotification } from "../../shared/ui/ShowNotification";
 
 export function LoginPage() {
-  const navigate = useNavigate()
-  
-  const { signIn, signUp, loading } = useAuth()
-  const [isLogin, setIsLogin] = useState(true)
+  const navigate = useNavigate();
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
-  const [confirmPassword, setConfirmationPassword] = useState('')
+  const { signIn, signUp, loading } = useAuth();
+  const [mode, setMode] = useState<"login" | "register" | "forgot">("login");
+
+  const dispatch = useAppDispatch();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [confirmPassword, setConfirmationPassword] = useState("");
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (isLogin) {
-      const params: LoginParams = { email, password }
-
-      await signIn(params)
-
-      navigate('/')
-    } else {
-      const params: RegisterParams = { name, email, password, confirmPassword }
-
-      await signUp(params)
-      navigate('/')
+    if (mode === "login") {
+      await signIn({ email, password });
+      navigate("/");
     }
-  }
+
+    if (mode === "register") {
+      await signUp({ name, email, password, confirmPassword });
+      navigate("/");
+    }
+
+    if (mode === "forgot") {
+      const result = await dispatch(forgotPasswordAsync(email));
+
+      if (forgotPasswordAsync.fulfilled.match(result)) {
+        ShowNotification(
+          "If this email exists, reset instructions were sent",
+          "success",
+        );
+        setMode("login");
+      } else {
+        ShowNotification("Something went wrong", "error");
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -38,10 +53,12 @@ export function LoginPage() {
         className="bg-white p-6 rounded-xl shadow w-80 flex flex-col gap-3"
       >
         <h1 className="text-xl font-bold mb-4">
-          {isLogin ? 'Login' : 'Register'}
+          {mode === "login" && "Login"}
+          {mode === "register" && "Register"}
+          {mode === "forgot" && "Reset Password"}
         </h1>
 
-        {!isLogin && (
+        {mode === "register" && (
           <input
             className="w-full p-2 border rounded"
             placeholder="Name"
@@ -50,6 +67,12 @@ export function LoginPage() {
           />
         )}
 
+        {mode === "forgot" && (
+          <p className="text-sm text-gray-500">
+            Enter your email and we’ll send you instructions to reset your
+            password.
+          </p>
+        )}
         <input
           className="w-full p-2 border rounded"
           placeholder="Email"
@@ -57,15 +80,17 @@ export function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <input
-          type="password"
-          className="w-full p-2 border rounded"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        {mode !== "forgot" && (
+          <input
+            type="password"
+            className="w-full p-2 border rounded"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        )}
 
-        {!isLogin && (
+        {mode === "register" && (
           <input
             type="password"
             className="w-full p-2 border rounded"
@@ -79,16 +104,49 @@ export function LoginPage() {
           disabled={loading}
           className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
         >
-          {loading ? 'Loading...' : isLogin ? 'Login' : 'Register'}
+          {loading && "Loading..."}
+          {!loading && mode === "login" && "Login"}
+          {!loading && mode === "register" && "Create Account"}
+          {!loading && mode === "forgot" && "Send Reset Link"}
         </button>
+        <div className="mt-4 flex justify-between text-sm">
+          {mode === "login" && (
+            <>
+              <span
+                className="text-blue-500 cursor-pointer"
+                onClick={() => setMode("register")}
+              >
+                No account? Register
+              </span>
 
-        <div
-          className="mt-4 text-sm text-blue-500 cursor-pointer text-center"
-          onClick={() => setIsLogin(!isLogin)}
-        >
-          {isLogin ? 'No account? Register' : 'Have account? Login'}
+              <span
+                className="text-blue-500 cursor-pointer"
+                onClick={() => setMode("forgot")}
+              >
+                Forgot password?
+              </span>
+            </>
+          )}
+
+          {mode === "register" && (
+            <span
+              className="text-blue-500 cursor-pointer"
+              onClick={() => setMode("login")}
+            >
+              Have account? Login
+            </span>
+          )}
+
+          {mode === "forgot" && (
+            <span
+              className="text-blue-500 cursor-pointer"
+              onClick={() => setMode("login")}
+            >
+              ← Back to login
+            </span>
+          )}
         </div>
       </form>
     </div>
-  )
+  );
 }

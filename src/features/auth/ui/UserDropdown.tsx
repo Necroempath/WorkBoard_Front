@@ -20,8 +20,14 @@ export function UserDropdown({ onClose }: Props) {
       <div className="px-3 py-2 text-sm text-gray-500 border-b">Signed in</div>
 
       <button
+        onClick={() => navigate("/profile")}
+        className="w-full text-left px-3 py-2 mt-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer rounded-lg"
+      >
+        Profile
+      </button>
+      <button
         onClick={handleLogout}
-        className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-gray-100 rounded-lg"
+        className="w-full text-left px-3 py-2 text-sm text-red-500 cursor-pointer hover:bg-gray-100 rounded-lg"
       >
         Logout
       </button>
