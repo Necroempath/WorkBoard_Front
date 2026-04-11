@@ -8,7 +8,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
     <div 
      onClick={() => navigate(`/workspaces/${project.workspaceId}/projects/${project.id}/board`)}
 
-     className="p-4 bg-white rounded shadow hover:bg-gray-50 cursor-pointer">
+     className="p-4 bg-white rounded shadow truncate hover:bg-gray-50 cursor-pointer">
       {project.name}
     </div>
   )

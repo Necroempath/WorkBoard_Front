@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { addMember, createWorkspace, getWorkspace, getWorkspaceMembers, getWorkspaces, removeMember, updateMemberRole } from './workspace.api'
+import { addMember, createWorkspace, getWorkspace, getWorkspaceMembers, getWorkspaces, removeMember, updateMemberRole, workspaceRole } from './workspace.api'
 import type { Workspace, WorkspaceMember } from '../../entities/workspace'
 
 export const fetchWorkspaces = createAsyncThunk('workspaces/fetch', async () => {
@@ -58,9 +58,17 @@ export const removeMemberAsync = createAsyncThunk(
   }
 )
 
+export const fetchWorkspaceRole = createAsyncThunk(
+  "workspaceRole/fetch",
+  async (workspaceId: string) => {
+    return await workspaceRole(workspaceId);
+  },
+);
+
 type WorkspaceState = {
   items: Workspace[]
   members: WorkspaceMember[]
+  role: number
   currentUserRole: number
   loading: boolean
   error: string | null
@@ -69,6 +77,7 @@ type WorkspaceState = {
 const initialState: WorkspaceState = {
   items: [],
   members: [],
+  role: 0,
   currentUserRole: 2,
   loading: false,
   error: null
@@ -115,6 +124,9 @@ export const workspacesSlice = createSlice({
         m => m.userId !== action.payload
       )
     })
+          .addCase(fetchWorkspaceRole.fulfilled, (state, action) => {
+            state.role = action.payload
+      });
   },
 })
 

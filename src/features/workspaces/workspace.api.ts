@@ -16,6 +16,12 @@ export const addMember = async (workspaceId: string, data: {
   return res.data
 }
 
+export const workspaceRole = async (workspaceId: string): Promise<number> => {
+  const res = await api.get<number>(`/workspaces/role/${workspaceId}`)
+  return res.data
+}
+
+
 export const getWorkspace = async(workspaceId: string): Promise<WorkspaceDetails> => {
     const res = await api.get<WorkspaceDetails>(`/workspaces/${workspaceId}`)
     return res.data
