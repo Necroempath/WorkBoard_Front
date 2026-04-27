@@ -10,7 +10,7 @@ export const createWorkspace = async (params: CreateWorkspaceParams): Promise<Wo
 
 export const addMember = async (workspaceId: string, data: {
   email: string
-  role: 1 | 2 | 3
+  role: number
 }) => {
   const res = await api.post(`/memberships/${workspaceId}`, data)
   return res.data

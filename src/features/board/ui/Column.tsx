@@ -96,7 +96,7 @@ const handleDelete = () => {
 </div>
 
       <div className="space-y-2 min-h-12.5">
-        {column.issues.map((issue, index) => {
+        {column.issues.map(issue => {
   const isActive = issue.id === activeId
   const isOver = issue.id === overId
 

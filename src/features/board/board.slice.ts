@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { createColumn, createIssue, deleteColumn, deleteIssue, getProject, moveIssueApi, updateColumn, updateIssue, updateProject, type CreateColumnParams } from './board.api'
 import type { Project } from '../../entities/project'
-import { api } from '../../shared/api/api'
 import type { Issue } from '../../entities/issue'
 
 

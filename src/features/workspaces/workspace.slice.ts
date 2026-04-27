@@ -21,7 +21,7 @@ export const addMemberAsync = createAsyncThunk(
     params: {
       workspaceId: string
       email: string
-      role: 1 | 2 | 3
+      role: number
     },
     { rejectWithValue }
   ) => {

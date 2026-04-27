@@ -19,7 +19,8 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 export const api = axios.create({
-  baseURL: "http://localhost:5081/",
+  // baseURL: "http://localhost:5081/",
+  baseURL: "http://workboard-api-env-1.eba-zuvwpa3p.eu-central-1.elasticbeanstalk.com/",
   withCredentials: true,
 });
 
